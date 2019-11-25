@@ -1,6 +1,5 @@
 # Compare an image with every frame of a video to find the best match
 import PySimpleGUI as sg
-
 import os
 import operator
 import time
@@ -21,11 +20,15 @@ start = time.process_time()
 
 #ignore non-contiguous skimage warning
 warnings.filterwarnings("ignore", module="skimage")
-event, values = sg.Window('title', [[sg.Text('Screenshot')], [sg.Input(key='_imgfile_'), sg.FileBrowse()], [sg.Text('Video')], [sg.Input(key='_vidfile_'), sg.FileBrowse()],  [sg.OK(), sg.Cancel()],  ]).Read()
+     
+event, values = sg.Window('title', [[sg.Text('Screenshot')], [sg.Input(key='_imgfile_'), sg.FileBrowse()], [sg.Text('Video')], [sg.Input(key='_vidfile_'), sg.FileBrowse()], [sg.Text('All video in folder')], [sg.Input(key='_folderpath_'), sg.FolderBrowse()], [sg.Text('Matches')], [sg.Slider(range=(1, 10), orientation='h', size=(34, 20), default_value=1, key=('_matchesn_'))], [sg.Output(size=(80, 20))],    [sg.OK(), sg.Cancel()],  ]).Read()
 print(values['_imgfile_'])
 imagefile= values['_imgfile_']
 videofile= values['_vidfile_']
+videodir= values['_folderpath_']
+matchesnumber= int(values['_matchesn_'])
 print(imagefile + ' ' + videofile)
+
 
 def prepare_image(filename):
     #open still image as rgb
@@ -64,6 +67,7 @@ def parse_video(image, video, n_matches, break_point=False, verbose=False):
 
         #increment frame counter
         frame_count += 1
+        
 
         #resize current video frame
         small_frame = cv2.resize(frame, (10, 10))
@@ -101,6 +105,7 @@ def parse_video(image, video, n_matches, break_point=False, verbose=False):
 
     cap.release()
     return similarities
+
 
 
 def sort_results(results, output=False):
@@ -171,32 +176,28 @@ def main():
     parser.add_argument('-n', '--number', help='number of best matches to return', type=int, default=1)
     parser.add_argument('-b', '--break_point', help='stop searching when frame with [break_point] accuracy found; a number between 0 and 1', type=float, default=False)
     parser.add_argument('-o', '--output', help='filename.ext for best match; saved files are appended with "_n.ext"')
-    parser.add_argument('-d', '--directory', help='directory of videos')
+    parser.add_argument('-d', '--directory', help='directory of videos', default=videodir)
     args = parser.parse_args()
 
     #check source and destination provided
-    if not args.image:
-        parser.error('argument -i / --image is required')
-    if not args.video:
-        if not args.directory:
-            parser.error('argument -v / --video is required')
+
 
     #prepare image
-    source_image = prepare_image(args.image)
+    source_image = prepare_image(imagefile)
 
     #either walk directory or hande single file
     if args.directory:
         #scan directory and process each video file
         print('\n--reading videos:')
-        results = walk(source_image, args.directory, args.number, args.break_point)
+        results = walk(source_image, args.directory, matchesnumber, args.break_point)
         s_results = sort_results(results, args.output)
         
     else:
         #process single video file
         print('\n--reading video:')
         similarities = parse_video(source_image,
-                                   args.video,
-                                   n_matches=args.number,
+                                   videofile,
+                                   n_matches=matchesnumber,
                                    break_point=args.break_point)
 
         print('\n\n--results:')
