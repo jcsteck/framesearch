@@ -19,7 +19,15 @@ start = time.process_time()
 
 #ignore non-contiguous skimage warning
 warnings.filterwarnings("ignore", module="skimage")
-
+input("Hey Letterhead! Let's search for a frame!  \n"
+"       ____\n"
+"  _[]_/____\__n_\n"
+" |_____.-  -.__()|\n"
+" |A&L / /# \ \   |\n"
+" |    \ \__/ /   |\n"
+" |      '--'     |\n"
+" '---------------' \n"
+"Press ENTER to continue.")
 imageInput= input("DRAG FRAME REFERENCE HERE or type reference file path:  ")
 imagefile = imageInput.replace('"', '')
 videoInput= input("DRAG VIDEO TO ANALYZE HERE or leave blank if searching directory:  ")
