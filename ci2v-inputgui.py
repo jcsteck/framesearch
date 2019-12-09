@@ -20,8 +20,8 @@ start = time.process_time()
 #ignore non-contiguous skimage warning
 warnings.filterwarnings("ignore", module="skimage")
 input("Hey Letterhead! Let's search for a frame!  \n"
-"       ____\n"
-"  _[]_/____\__n_\n"
+"       _____\n"
+"  _[]_/_____\__n_\n"
 " |_____.-  -.__()|\n"
 " |A&L / /# \ \   |\n"
 " |    \ \__/ /   |\n"
