@@ -121,6 +121,8 @@ def parse_video(image, video, n_matches, break_point=False, verbose=False):
         if break_point:
             if similarity >= break_point:
                 return similarities
+                input("Press any key to exit")
+ 
 
     cap.release()
     return similarities
@@ -216,14 +218,14 @@ def main():
     #either walk directory or hande single file
     if args.directory:
         #scan directory and process each video file
-        print('Looking inside directory:')
+        print('\nLOOKING INSIDE DIRECTORY:')
         print('\n--reading videos:')
         results = walk(source_image, args.directory, args.number, args.break_point)
         s_results = sort_results(results, args.output)
         
     else:
         #process single video file
-        print('Single Video mode:')
+        print('\nSINGLE VIDEO MODE:')
         print('\n--reading video:')
         similarities = parse_video(source_image,
                                    args.video,
@@ -244,11 +246,11 @@ def main():
     seconds_taken = time.process_time() - start
     time_taken = str(datetime.timedelta(seconds=seconds_taken))
     print('\n--time taken: \n%s\n' % time_taken)
+    input("Press any key to exit")
 
 
 if __name__ == '__main__':
     main()
-input("Press any key to exit")
 
 
 
