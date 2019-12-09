@@ -26,10 +26,16 @@ videoInput= input("DRAG VIDEO TO ANALYZE HERE or leave blank if searching direct
 videofile = videoInput.replace('"', '')
 dirInput= input("DRAG VIDEO DIRECTORY TO SEARCH HERE or leave blank to ignore if already chosen a video file:  ")
 videodir= dirInput.replace('"', '')
-numberInput= input("How many results should I find? (Enter at least 1)  ")
-matchesnumber= int(numberInput)
-breakInput= input("Stop when we find a match this similar (Enter a number between 0 and 1, where 1 is a perfect match and 0 won't stop the search until completed):  ")
-breakwhenFound= breakInput
+numberInput= input("How many results should I find? (OPTIONAL)  ")
+matchesnumber= int(1)
+if numberInput != '':
+    matchesnumber = int(numberInput)
+breakInput= input("Stop when we find a match this similar (Enter a number between 0 and 1, where 1 is a perfect match or leave blank to search all):  ")
+breakwhenFound= 0
+if breakInput != '':
+    breakwhenFound = breakInput
+
+
 
 
 
@@ -178,12 +184,22 @@ def main():
     parser.add_argument('-i', '--image', help='source image', default=imagefile)
     parser.add_argument('-v', '--video', help='video to search inside', default=videofile)
     parser.add_argument('-n', '--number', help='number of best matches to return', type=int, default=1)
-    parser.add_argument('-b', '--break_point', help='stop searching when frame with [break_point] accuracy found; a number between 0 and 1', type=float, default=breakInput)
+    parser.add_argument('-b', '--break_point', help='stop searching when frame with [break_point] accuracy found; a number between 0 and 1', type=float, default=breakwhenFound)
     parser.add_argument('-o', '--output', help='filename.ext for best match; saved files are appended with "_n.ext"')
     parser.add_argument('-d', '--directory', help='directory of videos', default=videodir)
     args = parser.parse_args()
 
     #check source and destination provided
+    if not args.image:
+        input('Did you choose an image? ¯\_(ツ)_/¯     Press any key to exit and try again.')
+        parser.error('Did you choose an image? ¯\_(ツ)_/¯')
+
+    if not args.video:
+        if not args.directory:
+            input('Did you choose a video or a directory containing videos? ¯\_(ツ)_/¯     Press any key to exit and try again.')
+            parser.error('argument -v / --video is required')
+
+    #breakpoint default
 
 
     #prepare image
@@ -192,12 +208,14 @@ def main():
     #either walk directory or hande single file
     if args.directory:
         #scan directory and process each video file
+        print('Looking inside directory:')
         print('\n--reading videos:')
         results = walk(source_image, args.directory, args.number, args.break_point)
         s_results = sort_results(results, args.output)
         
     else:
         #process single video file
+        print('Single Video mode:')
         print('\n--reading video:')
         similarities = parse_video(source_image,
                                    args.video,
@@ -222,7 +240,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-exitInput= input("Press any key to exit")
+input("Press any key to exit")
 
 
 
